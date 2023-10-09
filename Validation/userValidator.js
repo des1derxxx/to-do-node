@@ -9,3 +9,10 @@ export const registerValidation = [
     min: 5,
   }),
 ];
+
+export const loginValidation = [
+  body("email", "Неверный формат почты").isEmail(),
+  body("password", "Пароль должен содердать больше 4 символов").isLength({
+    min: 4,
+  }),
+];

@@ -5,7 +5,10 @@ import listSchema from "./models/list.js";
 import list from "./models/list.js";
 import cors from "cors";
 import { listController, UserController } from "./Controllers/index.js";
-import { registerValidation } from "./Validation/userValidator.js";
+import {
+  loginValidation,
+  registerValidation,
+} from "./Validation/userValidator.js";
 import { handleValidationError } from "./utils/index.js";
 const app = express();
 
@@ -27,6 +30,8 @@ app.post(
   handleValidationError.handleError,
   UserController.register
 );
+
+app.post("/auth/login", loginValidation, UserController.login);
 
 app.post("/", listController.create);
 app.get("/", listController.getAllLists);
