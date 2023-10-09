@@ -4,8 +4,9 @@ import "dotenv/config";
 import listSchema from "./models/list.js";
 import list from "./models/list.js";
 import cors from "cors";
-import { listController } from "./Controllers/index.js";
-
+import { listController, UserController } from "./Controllers/index.js";
+import { registerValidation } from "./Validation/userValidator.js";
+import { handleValidationError } from "./utils/index.js";
 const app = express();
 
 app.use(cors());
@@ -19,6 +20,13 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
+
+app.post(
+  "/auth/register",
+  registerValidation,
+  handleValidationError.handleError,
+  UserController.register
+);
 
 app.post("/", listController.create);
 app.get("/", listController.getAllLists);
