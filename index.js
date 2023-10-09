@@ -31,4 +31,4 @@ app.post(
 app.post("/", listController.create);
 app.get("/", listController.getAllLists);
 
-app.listen(4444, console.log("Ok"));
+app.listen(3333, console.log("Ok"));
