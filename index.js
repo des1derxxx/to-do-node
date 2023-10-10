@@ -9,7 +9,7 @@ import {
   loginValidation,
   registerValidation,
 } from "./Validation/userValidator.js";
-import { handleValidationError } from "./utils/index.js";
+import { handleValidationError, checkAuth } from "./utils/index.js";
 const app = express();
 
 app.use(cors());
@@ -32,8 +32,9 @@ app.post(
 );
 
 app.post("/auth/login", loginValidation, UserController.login);
+app.post("/posts", checkAuth.checkAuth, listController.create);
+app.get("/posts/:id", checkAuth.checkAuth, listController.getUserLists);
 
-app.post("/", listController.create);
-app.get("/", listController.getAllLists);
-
-app.listen(3333, console.log("Ok"));
+app.listen(3333, () => {
+  console.log("Ok");
+});
