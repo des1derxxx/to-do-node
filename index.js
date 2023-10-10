@@ -34,6 +34,8 @@ app.post(
 app.post("/auth/login", loginValidation, UserController.login);
 app.post("/posts", checkAuth.checkAuth, listController.create);
 app.get("/posts/:id", checkAuth.checkAuth, listController.getUserLists);
+app.patch("/posts/:id", checkAuth.checkAuth, listController.updatelist);
+app.delete("/posts/:id", checkAuth.checkAuth, listController.deleteList);
 
 app.listen(3333, () => {
   console.log("Ok");
