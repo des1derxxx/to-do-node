@@ -1,8 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import "dotenv/config";
-import listSchema from "./models/list.js";
-import list from "./models/list.js";
+
 import cors from "cors";
 import { listController, UserController } from "./Controllers/index.js";
 import {
@@ -10,6 +9,7 @@ import {
   registerValidation,
 } from "./Validation/userValidator.js";
 import { handleValidationError, checkAuth } from "./utils/index.js";
+import list from "./models/list.js";
 const app = express();
 
 app.use(cors());
@@ -33,9 +33,9 @@ app.post(
 
 app.post("/auth/login", loginValidation, UserController.login);
 app.post("/posts", checkAuth.checkAuth, listController.create);
-app.get("/posts/:id", checkAuth.checkAuth, listController.getUserLists);
 app.patch("/posts/:id", checkAuth.checkAuth, listController.updatelist);
 app.delete("/posts/:id", checkAuth.checkAuth, listController.deleteList);
+app.get("/posts/mylist", checkAuth.checkAuth, listController.getAllUsersLists);
 
 app.listen(3333, () => {
   console.log("Ok");

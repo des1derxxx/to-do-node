@@ -21,20 +21,6 @@ export const create = async (req, res) => {
   }
 };
 
-export const getUserLists = async (req, res) => {
-  try {
-    const userId = req.params.id;
-    const getUserLists = await listModel.find({ userId: userId });
-
-    res.json(getUserLists);
-  } catch (err) {
-    console.log(err);
-    res.status(404).json({
-      message: "Не удалось получить лист",
-    });
-  }
-};
-
 export const updatelist = async (req, res) => {
   try {
     const listId = req.params.id;
@@ -81,6 +67,26 @@ export const deleteList = async (req, res) => {
     console.log(err);
     res.status(404).json({
       message: "Не удалось удалить лист ",
+    });
+  }
+};
+
+export const getAllUsersLists = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const getLists = await listModel.find({
+      userId: userId,
+    });
+    if (!userId) {
+      return res.status(404).json({
+        message: "Err",
+      });
+    }
+    res.json(getLists);
+  } catch (err) {
+    console.log(err);
+    res.status(404).json({
+      message: "Не удалось получить лист",
     });
   }
 };
