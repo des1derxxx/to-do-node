@@ -79,7 +79,7 @@ export const getAllUsersLists = async (req, res) => {
     });
     if (!userId) {
       return res.status(404).json({
-        message: "Err",
+        message: "Аккаунт не найден",
       });
     }
     res.json(getLists);
