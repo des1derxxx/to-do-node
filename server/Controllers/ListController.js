@@ -1,5 +1,3 @@
-import list from "../models/list.js";
-import List from "../models/list.js";
 import listModel from "../models/list.js";
 
 export const create = async (req, res) => {

@@ -1,18 +1,20 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
+import token from "../utils/token.js";
 
 export const register = async (req, res) => {
   try {
     const password = req.body.password.toString();
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, Number(salt));
-
     const doc = new UserModel({
       email: req.body.email,
       fullName: req.body.fullName,
       passwordHash: hash,
     });
+
+    const tokef = token.generateTokens();
 
     const user = await doc.save();
 
