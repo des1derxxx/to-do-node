@@ -4,7 +4,6 @@ const tokenSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true,
   },
   refreshToken: {
     type: String,
@@ -12,4 +11,4 @@ const tokenSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.Schema("token", tokenSchema);
+export default mongoose.model("token", tokenSchema);

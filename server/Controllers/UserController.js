@@ -1,32 +1,37 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
-import token from "../utils/token.js";
+import { tokenService } from "../utils/index.js";
+
+import UserDto from "../Dtos/userDto.js";
 
 export const register = async (req, res) => {
   try {
-    const password = req.body.password.toString();
+    //const password = req.body.password.toString();
+    const { email, fullName, password } = req.body;
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, Number(salt));
+
     const doc = new UserModel({
-      email: req.body.email,
-      fullName: req.body.fullName,
+      email,
+      fullName,
       passwordHash: hash,
     });
-
-    const tokef = token.generateTokens();
-
     const user = await doc.save();
+    const userDto = new UserDto(user);
+    const token = tokenService.generateTokens({ ...userDto });
+    console.log(userDto.id);
+    await tokenService.saveToken(userDto.id, token.refreshToken);
 
-    const token = await jwt.sign(
-      {
-        _id: user._id,
-      },
-      process.env.token_word,
-      {
-        expiresIn: "30d",
-      }
-    );
+    // const token = await jwt.sign(
+    //   {
+    //     _id: user._id,
+    //   },
+    //   process.env.token_word,
+    //   {
+    //     expiresIn: "30d",
+    //   }
+    // );
 
     const { passwordHash, ...userData } = user._doc;
 
