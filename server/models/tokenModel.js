@@ -9,6 +9,10 @@ const tokenSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  accessToken: {
+    type: String,
+    required: true,
+  },
 });
 
 export default mongoose.model("token", tokenSchema);

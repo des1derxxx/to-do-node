@@ -29,12 +29,18 @@ export const validateRefreshToken = (token) => {
     return null;
   }
 };
-export const saveToken = async (userId, refreshToken) => {
+export const saveToken = async (userId, refreshToken, accessToken) => {
   const tokenData = await tokenModel.findOne({ user: userId });
   if (tokenData) {
     tokenData.refreshToken = refreshToken;
     return tokenData.save();
   }
-  const token = await tokenModel.create({ user: userId, refreshToken });
+  const token = await tokenModel.create({
+    user: userId,
+    refreshToken,
+    accessToken,
+  });
   return token;
 };
+
+export const removeToken = async () => {};

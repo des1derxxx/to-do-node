@@ -10,18 +10,21 @@ export const register = async (req, res) => {
     //const password = req.body.password.toString();
     const { email, fullName, password } = req.body;
     const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, Number(salt));
+    const passwordHash = await bcrypt.hash(password, Number(salt));
 
     const doc = new UserModel({
       email,
       fullName,
-      passwordHash: hash,
+      passwordHash,
     });
     const user = await doc.save();
     const userDto = new UserDto(user);
     const token = tokenService.generateTokens({ ...userDto });
-    console.log(userDto.id);
-    await tokenService.saveToken(userDto.id, token.refreshToken);
+    await tokenService.saveToken(
+      userDto.id,
+      token.refreshToken,
+      token.accessToken
+    );
 
     // const token = await jwt.sign(
     //   {
@@ -33,7 +36,7 @@ export const register = async (req, res) => {
     //   }
     // );
 
-    const { passwordHash, ...userData } = user._doc;
+    const { hash, ...userData } = user._doc;
 
     res.json({
       ...userData,
@@ -68,15 +71,23 @@ export const login = async (req, res) => {
       });
     }
 
-    const token = await jwt.sign(
-      {
-        _id: user._id,
-      },
-      "secret123",
-      {
-        expiresIn: "30d",
-      }
+    const userDto = new UserDto(user);
+    const token = tokenService.generateTokens(userDto);
+    await tokenService.saveToken(
+      userDto.id,
+      token.refreshToken,
+      token.accessToken
     );
+
+    // const token = await jwt.sign(
+    //   {
+    //     _id: user._id,
+    //   },
+    //   "secret123",
+    //   {
+    //     expiresIn: "30d",
+    //   }
+    // );
 
     const { passwordHash, ...userData } = user._doc;
 
