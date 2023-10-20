@@ -26,16 +26,6 @@ export const register = async (req, res) => {
       token.accessToken
     );
 
-    // const token = await jwt.sign(
-    //   {
-    //     _id: user._id,
-    //   },
-    //   process.env.token_word,
-    //   {
-    //     expiresIn: "30d",
-    //   }
-    // );
-
     const { hash, ...userData } = user._doc;
 
     res.json({
@@ -78,16 +68,6 @@ export const login = async (req, res) => {
       token.refreshToken,
       token.accessToken
     );
-
-    // const token = await jwt.sign(
-    //   {
-    //     _id: user._id,
-    //   },
-    //   "secret123",
-    //   {
-    //     expiresIn: "30d",
-    //   }
-    // );
 
     const { passwordHash, ...userData } = user._doc;
 
