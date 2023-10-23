@@ -22,6 +22,11 @@ export const create = async (req, res) => {
 export const updatelist = async (req, res) => {
   try {
     const listId = req.params.id;
+    if (!listId) {
+      return res.status(404).json({
+        message: "Лист не найден ",
+      });
+    }
     const updateList = await listModel.updateOne(
       {
         _id: listId,
@@ -31,11 +36,6 @@ export const updatelist = async (req, res) => {
         text: req.body.text,
       }
     );
-    if (!listId) {
-      return res.status(404).json({
-        message: "Лист не найден ",
-      });
-    }
     res.json({
       message: listId + "Статья обновлена",
     });
@@ -50,14 +50,16 @@ export const updatelist = async (req, res) => {
 export const deleteList = async (req, res) => {
   try {
     const listId = req.params.id;
-    const deleteList = await listModel.deleteOne({
-      _id: listId,
-    });
     if (!listId) {
       return res.status(404).json({
         message: "Не удалось удалить лист ",
       });
     }
+
+    const deleteList = await listModel.deleteOne({
+      _id: listId,
+    });
+
     res.json({
       message: listId + " Удален",
     });

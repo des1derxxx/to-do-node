@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import { tokenService } from "../utils/index.js";
-
 import UserDto from "../Dtos/userDto.js";
 
 export const register = async (req, res) => {
