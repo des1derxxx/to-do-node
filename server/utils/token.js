@@ -6,7 +6,7 @@ export const generateTokens = (payload) => {
     expiresIn: "15m",
   });
   const refreshToken = jwt.sign(payload, process.env.token_word, {
-    expiresIn: "15m",
+    expiresIn: "30d",
   });
   return {
     accessToken,
@@ -43,4 +43,12 @@ export const saveToken = async (userId, refreshToken, accessToken) => {
   return token;
 };
 
-export const removeToken = async () => {};
+export const removeToken = async (refreshToken) => {
+  const tokenData = await tokenModel.deleteOne({ refreshToken });
+  return tokenData;
+};
+
+export const findToken = async (refreshToken) => {
+  const tokenData = await tokenModel.findOne({ refreshToken });
+  return tokenData;
+};

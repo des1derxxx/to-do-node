@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import UserModel from "../models/UserModel.js";
 import { tokenService } from "../utils/index.js";
 import UserDto from "../Dtos/userDto.js";
+import tokenModel from "../models/tokenModel.js";
 
 export const register = async (req, res) => {
   try {
@@ -26,7 +27,10 @@ export const register = async (req, res) => {
     );
 
     const { hash, ...userData } = user._doc;
-
+    res.cookie("refreshToken", token.refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
     res.json({
       ...userData,
       token,
@@ -69,7 +73,10 @@ export const login = async (req, res) => {
     );
 
     const { passwordHash, ...userData } = user._doc;
-
+    res.cookie("refreshToken", token.refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
     res.json({
       ...userData,
       token,
@@ -79,5 +86,47 @@ export const login = async (req, res) => {
     res.status(404).json({
       message: "Ошибка" + err,
     });
+  }
+};
+
+export const logout = async (req, res) => {
+  try {
+    const { refreshToken } = res.cookie;
+    const token = await tokenService.removeToken(refreshToken);
+    res.clearCookie("refreshToken");
+    return res.json(token);
+  } catch (err) {
+    console.log(err);
+    res.json({
+      message: err,
+    });
+  }
+};
+
+export const refresh = async (req, res) => {
+  try {
+    const { refreshToken } = req.cookie;
+    if (!refreshToken) {
+      return res.json({
+        message: "Токена нет!",
+      });
+    }
+
+    const userData = tokenService.validateRefreshToken(refreshToken);
+    const tokenFromDb = await tokenModel.findOne(refreshToken);
+    if (!userData || !tokenFromDb) {
+      return res.json({
+        message: "Токена нет!",
+      });
+    }
+    const user = await UserModel.findById(userData.id);
+    const userDto = new UserDto(user);
+    const tokens = tokenService.generateTokens(...userDto);
+
+    await tokenService.saveToken(userDto.id, tokens.refreshToken);
+
+    return { ...tokens, user: userDto };
+  } catch (err) {
+    console.log(err);
   }
 };
